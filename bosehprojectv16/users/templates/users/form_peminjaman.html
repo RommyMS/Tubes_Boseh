@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Peminjaman Sepeda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #4CAF50;
+        }
+
+        .form-section input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .buttons {
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Form Peminjaman Sepeda</h1>
+        </div>
+
+        <div class="form-section">
+            <h3>Detail Sepeda</h3>
+            <p><strong>Tipe:</strong> {{ sepeda.tipe_sepeda }}</p>
+            <p><strong>Merk:</strong> {{ sepeda.merk_sepeda }}</p>
+            <p><strong>Harga Sewa:</strong> Rp {{ sepeda.harga_sewa }} / jam</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-section">
+                <label for="id_tanggal_peminjaman">Tanggal Peminjaman:</label>
+                <input type="date" name="tanggal_peminjaman" id="id_tanggal_peminjaman" required>
+
+                <label for="id_lama_peminjaman">Lama Peminjaman (HH:MM:SS):</label>
+                <input type="text" name="lama_peminjaman" id="id_lama_peminjaman" placeholder="Misal: 03:00:00" required>
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Pinjam Sepeda</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

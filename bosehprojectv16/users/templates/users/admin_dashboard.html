@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1, h2, h3, h4 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 8px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        button, select, input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover, select:hover, input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 5px 0;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .message.success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, {{ admin.nama_admin }}!</p>
+    </header>
+
+    <nav>
+        <a href="{% url 'logout' %}">Logout</a>
+        <a href="#crud-data">CRUD Data</a>
+    </nav>
+
+    <main>
+        <!-- Display Feedback Messages -->
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div id="crud-data">
+            <!-- Stasiun Section -->
+            <div class="section">
+                <h2>Stasiun</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Stasiun</th>
+                                <th>Nama Stasiun</th>
+                                <th>Alamat</th>
+                                <th>Sepeda Tersedia</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stasiun in stasiun_list %}
+                            <tr>
+                                <td>{{ stasiun.id_stasiun }}</td>
+                                <td>{{ stasiun.nama_stasiun }}</td>
+                                <td>{{ stasiun.alamat_stasiun }}</td>
+                                <td>
+                                    <ul>
+                                        {% for sepeda in stasiun.sepeda.all %}
+                                        <li>{{ sepeda.tipe_sepeda }} - {{ sepeda.merk_sepeda }} ({{ sepeda.status_sepeda }})</li>
+                                        {% empty %}
+                                        <li>Belum ada sepeda yang di-assign</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a href="?edit_stasiun={{ stasiun.id_stasiun }}">Edit</a> |
+                                    <a href="?delete_stasiun={{ stasiun.id_stasiun }}">Hapus</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            
+                <form method="post">
+                    {% csrf_token %}
+                    <h4>Tambah atau Perbarui Stasiun</h4>
+                    {{ stasiun_form.as_p }}
+                    <button type="submit" name="stasiun_submit">Simpan</button>
+                </form>
+            </div>
+            
+
+            <hr>
+
+            <!-- Sepeda Section -->
+            <div class="section">
+                <h2>Data Sepeda</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {% if sepeda_form.instance.id_sepeda %}
+                    <input type="hidden" name="sepeda_id" value="{{ sepeda_form.instance.id_sepeda }}">
+                    {% endif %}
+                    {{ sepeda_form.as_p }}
+                    <button type="submit" name="sepeda_submit">
+                        {% if sepeda_form.instance.id_sepeda %}Update Sepeda{% else %}Simpan Sepeda{% endif %}
+                    </button>
+                </form>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipe</th>
+                                <th>Merk</th>
+                                <th>Harga Sewa</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sepeda in sepeda_list %}
+                            <tr>
+                                <td>{{ sepeda.id_sepeda }}</td>
+                                <td>{{ sepeda.tipe_sepeda }}</td>
+                                <td>{{ sepeda.merk_sepeda }}</td>
+                                <td>{{ sepeda.harga_sewa }}</td>
+                                <td>{{ sepeda.status_sepeda }}</td>
+                                <td>
+                                    <a href="?edit_sepeda={{ sepeda.id_sepeda }}">Edit</a> |
+                                    <a href="?delete_sepeda={{ sepeda.id_sepeda }}">Hapus</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Assign Sepeda ke Stasiun -->
+            <form method="post">
+                {% csrf_token %}
+                <h4>Assign Sepeda ke Stasiun</h4>
+                <label for="stasiun_id">Pilih Stasiun:</label>
+                <select name="stasiun_id" required>
+                    {% for stasiun in stasiun_list %}
+                    <option value="{{ stasiun.id_stasiun }}">{{ stasiun.nama_stasiun }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="sepeda_id">Pilih Sepeda:</label>
+                <select name="sepeda_id" required>
+                    {% for sepeda in sepeda_list %}
+                    {% if sepeda.status_sepeda == 'tersedia' %}
+                    <option value="{{ sepeda.id_sepeda }}">{{ sepeda.tipe_sepeda }} - {{ sepeda.merk_sepeda }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+
+                <button type="submit" name="assign_sepeda">Assign</button>
+            </form>
+
+            <hr>
+
+            <!-- Pemeliharaan Section -->
+            <div class="section">
+                <h2>Data Pemeliharaan</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {% if pemeliharaan_form.instance.id %}
+                    <input type="hidden" name="pemeliharaan_id" value="{{ pemeliharaan_form.instance.id }}">
+                    {% endif %}
+                    {{ pemeliharaan_form.as_p }}
+                    <button type="submit" name="pemeliharaan_submit">
+                        {% if pemeliharaan_form.instance.id %}Update Pemeliharaan{% else %}Simpan Pemeliharaan{% endif %}
+                    </button>
+                </form>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sepeda</th>
+                                <th>Admin</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pemeliharaan in pemeliharaan_list %}
+                            <tr>
+                                <td>{{ pemeliharaan.sepeda }}</td>
+                                <td>{{ pemeliharaan.admin }}</td>
+                                <td>{{ pemeliharaan.status_pemeliharaan }}</td>
+                                <td>{{ pemeliharaan.tanggal_pemeliharaan }}</td>
+                                <td>
+                                    <a href="?edit_pemeliharaan={{ pemeliharaan.id }}">Edit</a> |
+                                    <a href="?delete_pemeliharaan={{ pemeliharaan.id }}">Hapus</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

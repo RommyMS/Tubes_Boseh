@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Customer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #4CAF50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content, .table-section {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .buttons a {
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            margin: 0 10px;
+            display: inline-block;
+        }
+
+        .buttons a:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome, {{ customer.nama_customer }}!</h1>
+        </div>
+
+        <div class="content">
+            <p><strong>Alamat:</strong> {{ customer.alamat_customer }}</p>
+            <p><strong>Telepon:</strong> {{ customer.telepon_customer }}</p>
+        </div>
+
+        <!-- Pesan Sukses atau Error -->
+        {% if messages %}
+            <div class="message">
+                {% for message in messages %}
+                    <p class="{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Daftar sepeda yang tersedia -->
+        <div class="table-section">
+            <h2>Daftar Sepeda yang Tersedia</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipe Sepeda</th>
+                        <th>Merk Sepeda</th>
+                        <th>Harga Sewa (per jam)</th>
+                        <th>Stasiun</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sepeda in sepeda_tersedia %}
+                        <tr>
+                            <td>{{ sepeda.tipe_sepeda }}</td>
+                            <td>{{ sepeda.merk_sepeda }}</td>
+                            <td>Rp {{ sepeda.harga_sewa }}</td>
+                            <td>{{ sepeda.stasiun.nama_stasiun }}</td>
+                            <td>
+                                <a href="{% url 'pilih_sepeda' sepeda.id_sepeda %}">Pinjam Sepeda</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Tidak ada sepeda yang tersedia.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Button Logout -->
+        <div class="buttons">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

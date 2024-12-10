@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proses Pembayaran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #4CAF50;
+        }
+
+        .form-section {
+            margin-top: 20px;
+        }
+
+        .form-section input,
+        .form-section select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .buttons {
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Proses Pembayaran</h1>
+        </div>
+
+        <div>
+            <p><strong>Total Pembayaran:</strong> Rp {{ pembayaran.jumlah_pembayaran }}</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-section">
+                <label for="metode_pembayaran">Metode Pembayaran:</label>
+                <select name="metode_pembayaran" required>
+                    <option value="">Pilih Metode</option>
+                    <option value="transfer">Transfer Bank</option>
+                    <option value="cash">Cash</option>
+                    <option value="kartu_kredit">Kartu Kredit</option>
+                </select>
+
+                <label for="bukti_pembayaran">Unggah Bukti Pembayaran (opsional):</label>
+                <input type="file" name="bukti_pembayaran">
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Bayar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
